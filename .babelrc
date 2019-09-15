@@ -1,0 +1,15 @@
+// 这里设置的是用Babel把所有.js文件（lecture里说是ES6）转化为能在最新的5个版本的浏览器用的
+// preset好像是一个plugin的集合，env是其中一个包，"env"逗号后面跟的是
+// 我们想要JS代码所运行的环境（browser）。
+{
+    "presets": [
+        ["@babel/env", {
+            "targets": {
+                "browsers":[
+                    "last 5 versions",
+                    "ie >= 8"
+                ]
+            }
+        }] 
+    ]
+}
