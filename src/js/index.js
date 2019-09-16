@@ -74,3 +74,22 @@ elements.searchForm.addEventListener('submit', e=>{
     e.preventDefault();
     controlSearch();
 });
+
+// 这里（MVC中的C）放置event listener; 
+// 并且用到了事件代理，因为page load的时候不知道有没有pagination button
+// 我们的策略是先attach event listener到一个已经存在的元素上，然后找出click发生的位置
+elements.searchResPages.addEventListener('click', e =>{
+    // 由于出现被监听的元素太过具体的情况（我们只要button），这里用closest method
+    // closest作用的原理是找到离e.target最近的拥有.btn-inline class的父元素，或它本身
+    const btn = e.target.closest('.btn-inline');
+    if(btn){
+        // dataset这个property用来提取html元素中的自定义属性data，提取出来的数据类型是string
+        // parseInt里的10是10进制的意思
+        const goToPage = parseInt(btn.dataset.goto, 10);
+        // 这一步是把先前页面的结果清理掉，这里体现出了separate 功能的好处
+        searchView.clearResults();
+        
+        searchView.renderResults(state.search.result, goToPage);
+    }
+})
+ 
