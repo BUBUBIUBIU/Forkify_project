@@ -28,6 +28,7 @@ console.log(`${searchView.add(3, 5)}`);
 */
 
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import { elements, renderLoader, clearLoader } from './views/base';
 import * as searchView from './views/searchView';
 
@@ -41,6 +42,9 @@ import * as searchView from './views/searchView';
 // 每次reload app后，这个state就会成empty，我们得想办法让某些数据保持persist
 const state = {}
 
+/**
+ * SEARCH CONTROLLER
+ */
 const controlSearch = async () => {
     // 1) Get query from view
     const query = searchView.getInput();
@@ -54,12 +58,18 @@ const controlSearch = async () => {
         searchView.clearResults();
         renderLoader(elements.searchRes);
 
-        // 4) Search for recipe;
-        await state.search.getResults();
-
-        // 5) Render results on UI
-        clearLoader();
-        searchView.renderResults(state.search.result);
+        try{
+            // 4) Search for recipe;
+            await state.search.getResults();
+    
+            // 5) Render results on UI
+            clearLoader();
+            searchView.renderResults(state.search.result);
+        }catch(err){
+            alert('Something wrong with the search...');
+            // 就算没有显示出结果，也要把那个旋转的圈圈去掉哦
+            clearLoader();
+        }
     }
 }
 
@@ -92,4 +102,37 @@ elements.searchResPages.addEventListener('click', e =>{
         searchView.renderResults(state.search.result, goToPage);
     }
 })
- 
+
+/**
+ * RECIPE CONTROLLER
+ */
+const controlRecipe = async () => {
+    // Get ID from url
+    const id = window.location.hash.replace('#', '');
+    console.log(id);
+
+    if(id){
+        // Prepare UI for changes
+
+        // Create new recipe object
+        state.recipe = new Recipe(id);
+
+        try{
+            // Get recipe data (这里会停顿等一下)
+            await state.recipe.getRecipe();
+    
+            // Calculate servings and time
+            state.recipe.calcTime();
+            state.recipe.calcServings();
+    
+            // Render recipe
+            console.log(state.recipe);
+        }catch(err){
+            alert('Error processing recipe!');
+        }
+    }
+}
+
+// load应该是刷新页面时出发的. 这里用到一个技巧，对不同的事件加同一个event listener的操作
+// 关键是forEach。如果出现10个事件，就可以这样做
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe)); 
