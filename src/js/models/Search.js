@@ -16,7 +16,8 @@ class Search{
         // 而如果我们用fetch的话，还要多一步转换过程
         try{
             // axios会return一个promise，和fetch一样
-            const res = await axios(`${proxy}https://www.food2fork.com/api/search?key=${key}&q=${this.query}`);
+            const res = await axios(`${proxy}http://food2fork.com/api/search?key=${key}&q=${this.query}`);
+            console.log(res);
             this.result = res.data.recipes;
         }catch(error){
             // If we use fetch method, we probably cannot catch the error.

@@ -48,28 +48,38 @@ const state = {}
 const controlSearch = async () => {
     // 1) Get query from view
     const query = searchView.getInput();
+    // const query = 'pizza';
 
     if (query){
         // 2) New search objcet and add to state
         state.search = new Search(query);
-
+        console.log(state.search);
+        
         // 3) Prepare UI for results
         searchView.clearInput();
         searchView.clearResults();
         renderLoader(elements.searchRes);
 
-        try{
-            // 4) Search for recipe;
-            await state.search.getResults();
+        // 4) Search for recipe;
+        await state.search.getResults();
     
-            // 5) Render results on UI
-            clearLoader();
-            searchView.renderResults(state.search.result);
-        }catch(err){
-            alert('Something wrong with the search...');
-            // 就算没有显示出结果，也要把那个旋转的圈圈去掉哦
-            clearLoader();
-        }
+        // 5) Render results on UI
+        clearLoader();
+        searchView.renderResults(state.search.result);
+
+        // try{
+        //     // 4) Search for recipe;
+        //     await state.search.getResults();
+    
+        //     // 5) Render results on UI
+        //     clearLoader();
+        //     searchView.renderResults(state.search.result);
+        // }catch(err){
+        //     alert('Something wrong with the search...');
+        //     console.log(err);
+        //     // 就算没有显示出结果，也要把那个旋转的圈圈去掉哦
+        //     clearLoader();
+        // }
     }
 }
 
@@ -84,6 +94,12 @@ elements.searchForm.addEventListener('submit', e=>{
     e.preventDefault();
     controlSearch();
 });
+
+// // TESTING
+// window.addEventListener('load', e=>{
+//     e.preventDefault();
+//     controlSearch();
+// });
 
 // 这里（MVC中的C）放置event listener; 
 // 并且用到了事件代理，因为page load的时候不知道有没有pagination button
@@ -116,6 +132,9 @@ const controlRecipe = async () => {
 
         // Create new recipe object
         state.recipe = new Recipe(id);
+
+        // TESTING 这个r其实是recipe，用来测试用
+        window.r = state.recipe;
 
         try{
             // Get recipe data (这里会停顿等一下)

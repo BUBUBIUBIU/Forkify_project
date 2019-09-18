@@ -34,4 +34,26 @@ export default class Recipe{
     calcServings(){
         this.servings = 4;
     }
+
+    parseIngredients(){
+        const unitsLong = ['tablespoons', 'tablespoon', 'ounce', 'ounces', 'teaspoon', 'teaspoons', 'cups', 'pounds'];
+        const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+
+        const newIngredients = this.ingredients.map(el => {
+            // 1) Uniform units
+            let ingredient = el.toLowerCase();
+            // 通过array操作做交换
+            unitsLong.forEach((unit, i) => {
+                ingredient = ingredient.replace(unit, unitsShort[i]);
+            });
+
+            // 2) Remove parentheses
+            // 把括号里的东西连带括号一起去掉，看看MDN正则表达式?
+            ingredient = ingredient.replace(/ *\([^)]*\) */g, '');
+
+            // 3) Parse ingredient into count, unit and ingredient
+            return ingredient;
+        });
+        this.ingredients = newIngredients
+    }
 }
