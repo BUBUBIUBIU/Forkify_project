@@ -3,7 +3,7 @@
 // export default "I am";
 
 import axios from 'axios';  // 一般package name保持和引入的包名一致 
-import { key, proxy } from '../config'
+import { key, proxy, appID } from '../config'
 
 class Search{
     constructor(query){
@@ -17,7 +17,7 @@ class Search{
         try{
             // axios会return一个promise，和fetch一样
             const res = await axios(`${proxy}http://food2fork.com/api/search?key=${key}&q=${this.query}`);
-            console.log(res);
+            // const res = await axios(`${proxy}https://api.edamam.com/search?q=${this.query}&from=0&to=50&app_id=${appID}&app_key=${key}`);
             this.result = res.data.recipes;
         }catch(error){
             // If we use fetch method, we probably cannot catch the error.
