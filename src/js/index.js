@@ -31,6 +31,7 @@ import Search from './models/Search';
 import Recipe from './models/Recipe';
 import { elements, renderLoader, clearLoader } from './views/base';
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 
 /** Global state of the app
  * - Search object
@@ -67,6 +68,7 @@ const controlSearch = async () => {
             searchView.renderResults(state.search.result);
         }catch(err){
             alert('Something wrong with the search...');
+            console.log(err);
             // 就算没有显示出结果，也要把那个旋转的圈圈去掉哦
             clearLoader();
         }
@@ -113,6 +115,11 @@ const controlRecipe = async () => {
 
     if(id){
         // Prepare UI for changes
+        recipeView.clearRecipe();
+        renderLoader(elements.recipe);
+
+        // Highight selected search item (还要记得排除那种load但没有search的情况)
+        if(state.search) searchView.highlightSelected(id);
 
         // Create new recipe object
         state.recipe = new Recipe(id);
@@ -127,7 +134,8 @@ const controlRecipe = async () => {
             state.recipe.calcServings();
     
             // Render recipe
-            console.log(state.recipe);
+            clearLoader();
+            recipeView.renderRecipe(state.recipe);
         }catch(err){
             alert('Error processing recipe!');
         }
@@ -137,3 +145,17 @@ const controlRecipe = async () => {
 // load应该是刷新页面时出发的. 这里用到一个技巧，对不同的事件加同一个event listener的操作
 // 关键是forEach。如果出现10个事件，就可以这样做
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe)); 
+
+// Handling recipe button clicks
+// 这里提一下，在这次使用事件代理时，我们不能使用closest，因为我们需要分辨出被按的按钮是哪一个
+// （+还是-，或者是like button）。所以这里我们使用一种新method，match。
+elements.recipe.addEventListener('click', e => {
+    // 这里match的用法是选择了btn-decrease这个class，也选择了该class的所有子元素
+    if (e.target.matches('.btn-decrease, .btn-decrease *')){
+        // Decrease button is clicked
+        state.recipe.updateServings('dec');
+    }else if (e.target.matches('.btn-increase, .btn-increase *')){
+        // Increase button is clicked
+        state.recipe.updateServings('inc');
+    }
+});

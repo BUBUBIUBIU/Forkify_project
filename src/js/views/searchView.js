@@ -17,6 +17,17 @@ export const clearResults = () => {
     elements.searchResPages.innerHTML = '';
 };
 
+export const highlightSelected = id => {
+    // remove之前被选中的;?ClassList要研究
+    const resultsArr = Array.from(document.querySelectorAll('.results__link'));
+    resultsArr.forEach(el => {
+        el.classList.remove('results__link--active');
+    });
+
+    // 这里教你如何选定load之前不存在的CSS class
+    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+} 
+
 /**
  * 这个func的作用是过滤掉字母长度大于17的标题
  * 这里用reduce，其实用foreach也可以，但reduce自带accumulator，方便
@@ -52,6 +63,22 @@ const renderRecipe = recipe => {
             </a>
         </li>
     `;
+
+    // const getID = (uri) => uri.split('#')[1];
+    // const markup = `
+    //     <li>
+    //         <a class="results__link" href="#${getID(recipe.recipe.uri)}">
+    //             <figure class="results__fig">
+    //                 <img src="${recipe.recipe.image}" alt="${recipe.recipe.label}">
+    //             </figure>
+    //             <div class="results__data">
+    //                 <h4 class="results__name">${recipe.recipe.label}</h4>
+    //                 <p class="results__author">${recipe.recipe.source}</p>
+    //             </div>
+    //         </a>
+    //     </li>
+    // `;
+
     elements.searchResList.insertAdjacentHTML('beforeend', markup);
 };
 

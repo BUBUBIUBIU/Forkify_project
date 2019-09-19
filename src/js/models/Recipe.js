@@ -12,6 +12,7 @@ export default class Recipe{
         try{
             // 这里的axios功能是fetch信息
             const res = await axios(`${proxy}https://www.food2fork.com/api/get?key=${key}&rId=${this.id}`);
+            // console.log(res);
             this.title = res.data.recipe.title;
             this.author = res.data.recipe.publisher;
             this.img = res.data.recipe.image_url;
@@ -39,6 +40,8 @@ export default class Recipe{
         // 注意加s的复数要放在前面，不然有miss match的现象
         const unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
         const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+        // 用destructuring的方式扩充了array
+        const units = [...unitsShort, 'kg', 'g'];
 
         const newIngredients = this.ingredients.map(el => {
             // 1) Uniform units
@@ -56,7 +59,7 @@ export default class Recipe{
             // 这里把每个ingredient的string拆分成每一个字段，并且check每一个字段是否是单位；这个任务用到了一个
             // 强力method findIndex
             const arrIng = ingredient.split(' ');
-            const unitIndex = arrIng.findIndex(el2 => unitsShort.includes(el2));
+            const unitIndex = arrIng.findIndex(el2 => units.includes(el2));
 
             // 接下来就是一些琐碎的事情，根据unitIndex返回的不同结果做出判断
             let objIng;
@@ -68,6 +71,7 @@ export default class Recipe{
 
                 let count;
                 if(arrCount.length === 1){
+                    // 对string直接做运算的method
                     count = eval(arrIng[0].replace('-', '+'));
                 }else{
                     count = eval(arrIng.slice(0, unitIndex).join('+'));
@@ -102,5 +106,17 @@ export default class Recipe{
             return objIng;
         });
         this.ingredients = newIngredients
+    }
+
+    updateServings (type) {
+        // Servings
+        const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
+
+        // Ingredients
+        this.ingredients.forEach(ing => {
+            ing.count *= (this.servings/newServings);
+        })
+
+        this.servings = newServings;
     }
 }
