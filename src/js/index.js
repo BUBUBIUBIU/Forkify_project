@@ -29,9 +29,11 @@ console.log(`${searchView.add(3, 5)}`);
 
 import Search from './models/Search';
 import Recipe from './models/Recipe';
+import List from './models/List';
 import { elements, renderLoader, clearLoader } from './views/base';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
+import * as listView from './views/listView';
 
 /** Global state of the app
  * - Search object
@@ -41,7 +43,8 @@ import * as recipeView from './views/recipeView';
  */
 
 // 每次reload app后，这个state就会成empty，我们得想办法让某些数据保持persist
-const state = {}
+const state = {};
+window.state = state;
 
 /**
  * SEARCH CONTROLLER
@@ -146,6 +149,44 @@ const controlRecipe = async () => {
 // 关键是forEach。如果出现10个事件，就可以这样做
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe)); 
 
+/**
+ * LIST CONTROLLER
+ */
+const controlList = () => {
+    // Create a new list IF there in none yet (这里是怕出现两个list对象同时占用state.list这个object)
+    if (!state.list) state.list = new List();
+
+    // Add each ingredient to the list
+    state.recipe.ingredients.forEach(el => {
+        const item = state.list.addItem(el.count, el.unit, el.ingredient);
+        listView.renderItem(item);
+    })
+}
+
+// Handle delete and update list item events
+elements.shopping.addEventListener('click', e => {
+    // 这里用的是cloest，因为我们需要先找到被按下按钮的那块区域，
+    // 再从这块区域里识别是哪个按钮被按了
+    const id = e.target.closest('.shopping__item').dataset.itemid;
+
+    // Handle the delete button
+    if (e.target.matches('.shopping__element, .shopping__delete *')){
+        // 这里要做两个删除的动作，不仅要把这个item从UI上抹掉，还要从state.list中删除
+
+        // Delete from state
+        state.list.deleteItem(id);
+        
+        // Delete from UI
+        listView.deleteItem(id);
+    // Handle the count update; 注意，你如果直接去改数字的话，state里是不会出现的，这里只监听按钮按的结果
+    } else if (e.target.matches('.shopping__count-value')){
+        const val = parseFloat(e.target.value, 10);
+        state.list.updateCount(id, val);
+    } 
+
+});
+
+
 // Handling recipe button clicks
 // 这里提一下，在这次使用事件代理时，我们不能使用closest，因为我们需要分辨出被按的按钮是哪一个
 // （+还是-，或者是like button）。所以这里我们使用一种新method，match。
@@ -153,9 +194,18 @@ elements.recipe.addEventListener('click', e => {
     // 这里match的用法是选择了btn-decrease这个class，也选择了该class的所有子元素
     if (e.target.matches('.btn-decrease, .btn-decrease *')){
         // Decrease button is clicked
-        state.recipe.updateServings('dec');
+        if (state.recipe.servings > 1) {
+            state.recipe.updateServings('dec');
+            recipeView.updateServingsIngredients(state.recipe);
+        }
     }else if (e.target.matches('.btn-increase, .btn-increase *')){
         // Increase button is clicked
         state.recipe.updateServings('inc');
+        recipeView.updateServingsIngredients(state.recipe);
+    // 这里开始对add list下手了，由于add List button在page load前不存在，所以还要用事件代理中的matches 
+    }else if(e.target.matches('.recipe__btn--add, .recipe__btn--add *')){
+        controlList();
     }
 });
+
+window.l = new List();

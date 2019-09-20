@@ -89,7 +89,7 @@ export const renderRecipe = recipe => {
                 ${recipe.ingredients.map(el => createIngredient(el)).join('')}               
             </ul>
 
-            <button class="btn-small recipe__btn">
+            <button class="btn-small recipe__btn recipe__btn--add">
                 <svg class="search__icon">
                     <use href="img/icons.svg#icon-shopping-cart"></use>
                 </svg>
@@ -114,4 +114,16 @@ export const renderRecipe = recipe => {
     `;
 
     elements.recipe.insertAdjacentHTML('afterbegin', markup);
-}
+};
+
+export const updateServingsIngredients = recipe => {
+    // Update servings
+    document.querySelector('.recipe__info-data--people').textContent = recipe.servings;
+
+    // Update ingredients
+    const countElements = Array.from(document.querySelectorAll('.recipe__count'));
+    countElements.forEach((el, i) => {
+        // 这里利用了两个array间的互动
+        el.textContent = formatCount(recipe.ingredients[i].count);
+    });
+};
