@@ -30,10 +30,12 @@ console.log(`${searchView.add(3, 5)}`);
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import List from './models/List';
+import Likes from './models/Like';
 import { elements, renderLoader, clearLoader } from './views/base';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView from './views/listView';
+import * as likesView from './views/likesView';
 
 /** Global state of the app
  * - Search object
@@ -138,7 +140,10 @@ const controlRecipe = async () => {
     
             // Render recipe
             clearLoader();
-            recipeView.renderRecipe(state.recipe);
+            recipeView.renderRecipe(
+                state.recipe,
+                state.likes.isLiked(id)
+            );
         }catch(err){
             alert('Error processing recipe!');
         }
@@ -186,6 +191,42 @@ elements.shopping.addEventListener('click', e => {
 
 });
 
+/**
+ * LIKE CONTROLLER
+ */
+// TESTING
+state.likes = new Likes();
+likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+const controlLike = () => {
+    if(!state.likes) state.likes = new Likes();
+    const currentID = state.recipe.id;
+
+    // User has NOT yet liked current recipe
+    if (!state.likes.isLiked(currentID)){
+        // Add like to the state
+        const newLike = state.likes.addLike(
+            currentID,
+            state.recipe.title,
+            state.recipe.author,
+            state.recipe.img
+        )
+        // Toggle the like button
+        likesView.toggleLikeBtn(true);
+
+        // Add like from  UI list
+        likesView.renderLike(newLike);
+    } else {
+        // Remove like from the state
+        state.likes.deleteLike(currentID);
+        // Toggle the like button
+        likesView.toggleLikeBtn(false);
+
+        // Remove like from UI list
+        likesView.deleteLike(currentID);
+    }
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
+}
 
 // Handling recipe button clicks
 // 这里提一下，在这次使用事件代理时，我们不能使用closest，因为我们需要分辨出被按的按钮是哪一个
@@ -205,6 +246,9 @@ elements.recipe.addEventListener('click', e => {
     // 这里开始对add list下手了，由于add List button在page load前不存在，所以还要用事件代理中的matches 
     }else if(e.target.matches('.recipe__btn--add, .recipe__btn--add *')){
         controlList();
+    }else if(e.target.matches('.recipe__love, .recipe__love *')) {
+        // Like controller
+        controlLike();
     }
 });
 

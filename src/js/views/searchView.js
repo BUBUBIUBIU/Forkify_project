@@ -25,14 +25,14 @@ export const highlightSelected = id => {
     });
 
     // 这里教你如何选定load之前不存在的CSS class
-    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+    document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 } 
 
 /**
  * 这个func的作用是过滤掉字母长度大于17的标题
  * 这里用reduce，其实用foreach也可以，但reduce自带accumulator，方便
  */
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
     // const的array是可以push element的，因为这本质上没有mutate array（没有让variable指向另一个东西）
     const newTitle = [];
     if(title.length > limit){
