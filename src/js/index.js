@@ -46,7 +46,6 @@ import * as likesView from './views/likesView';
 
 // 每次reload app后，这个state就会成empty，我们得想办法让某些数据保持persist
 const state = {};
-window.state = state;
 
 /**
  * SEARCH CONTROLLER
@@ -116,7 +115,6 @@ elements.searchResPages.addEventListener('click', e =>{
 const controlRecipe = async () => {
     // Get ID from url
     const id = window.location.hash.replace('#', '');
-    console.log(id);
 
     if(id){
         // Prepare UI for changes
@@ -194,10 +192,6 @@ elements.shopping.addEventListener('click', e => {
 /**
  * LIKE CONTROLLER
  */
-// TESTING
-state.likes = new Likes();
-likesView.toggleLikeMenu(state.likes.getNumLikes());
-
 const controlLike = () => {
     if(!state.likes) state.likes = new Likes();
     const currentID = state.recipe.id;
@@ -228,6 +222,19 @@ const controlLike = () => {
     likesView.toggleLikeMenu(state.likes.getNumLikes());
 }
 
+window.addEventListener('load', () => {
+    state.likes = new Likes();
+
+    // Restore likes
+    state.likes.readStorage();
+
+    // Toggle like menu botton
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+    // Render the existing likes
+    state.likes.likes.forEach(like => likesView.renderLike(like));
+})
+
 // Handling recipe button clicks
 // 这里提一下，在这次使用事件代理时，我们不能使用closest，因为我们需要分辨出被按的按钮是哪一个
 // （+还是-，或者是like button）。所以这里我们使用一种新method，match。
@@ -251,5 +258,3 @@ elements.recipe.addEventListener('click', e => {
         controlLike();
     }
 });
-
-window.l = new List();
