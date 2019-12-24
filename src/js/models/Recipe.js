@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { key, proxy } from '../config'
+// import { key, proxy } from '../config'
 
 // 这就是我们要export出去的class
 export default class Recipe{
@@ -11,7 +11,8 @@ export default class Recipe{
     async getRecipe(){
         try{
             // 这里的axios功能是fetch信息
-            const res = await axios(`${proxy}https://www.food2fork.com/api/get?key=${key}&rId=${this.id}`);
+            // const res = await axios(`${proxy}https://www.food2fork.com/api/get?key=${key}&rId=${this.id}`); The food2fork is shutdown
+            const res = await axios(`https://forkify-api.herokuapp.com/api/get?rId=${this.id}`);
             // console.log(res);
             this.title = res.data.recipe.title;
             this.author = res.data.recipe.publisher;

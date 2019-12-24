@@ -3,7 +3,7 @@
 // export default "I am";
 
 import axios from 'axios';  // 一般package name保持和引入的包名一致 
-import { key, proxy, appID } from '../config';
+// import { key, proxy, appID } from '../config';
 
 class Search{
     constructor(query){
@@ -16,7 +16,8 @@ class Search{
         // 而如果我们用fetch的话，还要多一步转换过程
         try{
             // axios会return一个promise，和fetch一样
-            const res = await axios(`${proxy}http://food2fork.com/api/search?key=${key}&q=${this.query}`);
+            // const res = await axios(`${proxy}http://food2fork.com/api/search?key=${key}&q=${this.query}`); The food2fork is shutdown
+            const res = await axios(`https://forkify-api.herokuapp.com/api/search?&q=${this.query}`);
             this.result = res.data.recipes;
 
             // const res = await axios(`${proxy}https://api.edamam.com/search?q=${this.query}&from=0&to=50&app_id=${appID}&app_key=${key}`);
