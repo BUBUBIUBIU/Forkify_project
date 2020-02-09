@@ -55,7 +55,7 @@ const controlSearch = async () => {
     const query = searchView.getInput();
 
     if (query){
-        // 2) New search objcet and add to state
+        // 2) New search object and add to state
         state.search = new Search(query);
         
         // 3) Prepare UI for results
@@ -77,7 +77,7 @@ const controlSearch = async () => {
             clearLoader();
         }
     }
-}
+};
 
 // 好像用到了事件代理?
 // 这里不想让page reload 
@@ -107,7 +107,7 @@ elements.searchResPages.addEventListener('click', e =>{
         
         searchView.renderResults(state.search.result, goToPage);
     }
-})
+});
 
 /**
  * RECIPE CONTROLLER
@@ -121,7 +121,7 @@ const controlRecipe = async () => {
         recipeView.clearRecipe();
         renderLoader(elements.recipe);
 
-        // Highight selected search item (还要记得排除那种load但没有search的情况)
+        // Highlight selected search item (还要记得排除那种load但没有search的情况)
         if(state.search) searchView.highlightSelected(id);
 
         // Create new recipe object
@@ -146,7 +146,7 @@ const controlRecipe = async () => {
             alert('Error processing recipe!');
         }
     }
-}
+};
 
 // load应该是刷新页面时出发的. 这里用到一个技巧，对不同的事件加同一个event listener的操作
 // 关键是forEach。如果出现10个事件，就可以这样做
@@ -164,11 +164,11 @@ const controlList = () => {
         const item = state.list.addItem(el.count, el.unit, el.ingredient);
         listView.renderItem(item);
     })
-}
+};
 
 // Handle delete and update list item events
 elements.shopping.addEventListener('click', e => {
-    // 这里用的是cloest，因为我们需要先找到被按下按钮的那块区域，
+    // 这里用的是closest，因为我们需要先找到被按下按钮的那块区域，
     // 再从这块区域里识别是哪个按钮被按了
     const id = e.target.closest('.shopping__item').dataset.itemid;
 
@@ -204,7 +204,7 @@ const controlLike = () => {
             state.recipe.title,
             state.recipe.author,
             state.recipe.img
-        )
+        );
         // Toggle the like button
         likesView.toggleLikeBtn(true);
 
@@ -220,7 +220,7 @@ const controlLike = () => {
         likesView.deleteLike(currentID);
     }
     likesView.toggleLikeMenu(state.likes.getNumLikes());
-}
+};
 
 window.addEventListener('load', () => {
     state.likes = new Likes();
@@ -228,12 +228,12 @@ window.addEventListener('load', () => {
     // Restore likes
     state.likes.readStorage();
 
-    // Toggle like menu botton
+    // Toggle like menu button
     likesView.toggleLikeMenu(state.likes.getNumLikes());
 
     // Render the existing likes
     state.likes.likes.forEach(like => likesView.renderLike(like));
-})
+});
 
 // Handling recipe button clicks
 // 这里提一下，在这次使用事件代理时，我们不能使用closest，因为我们需要分辨出被按的按钮是哪一个

@@ -1,24 +1,24 @@
-// export const add = (a,b) => a + b;
-// export const multiply = (a, b) => a * b;
-// export const ID = 23;
+/**
+ * @file Search Model
+ * @author Michael Luo
+ */
 
 import { elements } from './base';
 
-// 这个function是为了获得输入的query值的
+// this func is for getting the query result.
 export const getInput = () => elements.searchInput.value;
 
-// 加{}不return？
 export const clearInput = () => {elements.searchInput.value = '';};
 
 export const clearResults = () => {
-    // 清理最左侧的结果
+    // clear search result
     elements.searchResList.innerHTML = '';
-    // 清理之前的button
+    // remove 'next page' button of search result
     elements.searchResPages.innerHTML = '';
 };
 
 export const highlightSelected = id => {
-    // remove之前被选中的;?ClassList要研究
+    // remove highlight effect of previous selected element
     const resultsArr = Array.from(document.querySelectorAll('.results__link'));
     resultsArr.forEach(el => {
         el.classList.remove('results__link--active');
@@ -26,10 +26,10 @@ export const highlightSelected = id => {
 
     // 这里教你如何选定load之前不存在的CSS class
     document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
-} 
+};
 
 /**
- * 这个func的作用是过滤掉字母长度大于17的标题
+ * @desc the func filters title length of which is more than 17,
  * 这里用reduce，其实用foreach也可以，但reduce自带accumulator，方便
  */
 export const limitRecipeTitle = (title, limit = 17) => {
@@ -40,14 +40,14 @@ export const limitRecipeTitle = (title, limit = 17) => {
             if(acc + cur.length < limit){
                 newTitle.push(cur);
             }
-            // ？这个应该是用来累加acc的，还需要make sure一下
+            // return accumulator
             return acc + cur.length;
         }, 0);
         // 这个join的功能和split相反，他是把各个element用' '粘合成string
         return `${newTitle.join(' ')} ...`;
     }
     return title;
-}
+};
 
 const renderRecipe = recipe => {
     const markup = `

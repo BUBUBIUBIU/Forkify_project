@@ -1,4 +1,4 @@
-// 把所有对DOM element的操作都放在这里，便于管理
+// Collection of different DOM operations. It is easy to manage and use
 export const elements = {
     searchForm: document.querySelector('.search'),
     searchInput: document.querySelector('.search__field'),
@@ -9,11 +9,11 @@ export const elements = {
     shopping: document.querySelector('.shopping__list'),
     likesMenu: document.querySelector('.likes__field'),
     likesList: document.querySelector('.likes__list')
-}
+};
 
 export const elementStrings = {
     loader: 'loader',
-}
+};
 
 // 这个function是建立一个spinner（就是那个旋转的箭头动画）于parent element中
 // parent element可以是search框，result框
@@ -27,7 +27,7 @@ export const renderLoader = parent => {
         </div>
     `;
     parent.insertAdjacentHTML('afterbegin', loader);
-}
+};
 
 // ?这个function不能用事件代理写吗
 export const clearLoader = () => {
